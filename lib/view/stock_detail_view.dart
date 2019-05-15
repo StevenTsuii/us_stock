@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:us_stock/models/stock_quote_detail_model.dart';
 
 class StockDetailView extends StatefulWidget {
   @override
@@ -8,6 +12,14 @@ class StockDetailView extends StatefulWidget {
 }
 
 class _StockDetailViewState extends State<StockDetailView> {
+  Future<StockQuoteDetailModel> _getStockQuoteDetail() async {
+    final response = await http.get(
+        "https://cloud.iexapis.com/stable/stock/goog/quote?token=pk_6cdc374726c74f7fae686d4a1953263a");
+    StockQuoteDetailModel model =
+        StockQuoteDetailModel.fromJson(jsonDecode(response.body));
+    return model;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -18,6 +30,25 @@ class _StockDetailViewState extends State<StockDetailView> {
         color: Colors.black54,
         child: Column(
           children: <Widget>[
+            FutureBuilder<StockQuoteDetailModel>(future: _getStockQuoteDetail(),
+              builder: (BuildContext context, AsyncSnapshot<StockQuoteDetailModel> snapshot){
+                switch(snapshot.connectionState){
+                  case ConnectionState.none:
+                    return Text("ConnectionState.none");
+                  case ConnectionState.active:
+                    return Text("ConnectionState.active");
+                  case ConnectionState.waiting:
+                    return Text("ConnectionState.waiting");
+                  case ConnectionState.done:
+                    if(snapshot.hasError){
+                      return Text("ConnectionState.done with error ${snapshot.error.toString()}");
+                    }else{
+                      return Text("ConnectionState.done Result:${snapshot.data.symbol} ==> ${snapshot.data.companyName}");
+                    }
+                    return null;
+                }
+              },)
+            ,
             Padding(
               padding: EdgeInsets.only(top: 8.0),
               child: Row(
