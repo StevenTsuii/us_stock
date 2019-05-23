@@ -1,8 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:us_stock/models/stock_quote_detail_model.dart';
+import 'package:us_stock/repository/data_repository.dart';
 
 class StockDetailView extends StatefulWidget {
   @override
@@ -12,12 +10,22 @@ class StockDetailView extends StatefulWidget {
 }
 
 class _StockDetailViewState extends State<StockDetailView> {
-  Future<StockQuoteDetailModel> _getStockQuoteDetail() async {
-    final response = await http.get(
-        "https://cloud.iexapis.com/stable/stock/goog/quote?token=pk_6cdc374726c74f7fae686d4a1953263a");
-    StockQuoteDetailModel model =
-        StockQuoteDetailModel.fromJson(jsonDecode(response.body));
-    return model;
+  final textEditingController = TextEditingController();
+
+  StockQuoteDetailModel _stockQuoteDetailModel;
+
+
+  @override
+  void initState() {
+    _requestStockQuoteDetail("aapl");
+  }
+
+  _requestStockQuoteDetail(String symbol) {
+    DataRepository().getStockQuoteDetail(symbol).then((model) {
+      setState(() {
+        _stockQuoteDetailModel = model;
+      });
+    });
   }
 
   @override
@@ -30,44 +38,60 @@ class _StockDetailViewState extends State<StockDetailView> {
         color: Colors.black54,
         child: Column(
           children: <Widget>[
-            FutureBuilder<StockQuoteDetailModel>(future: _getStockQuoteDetail(),
-              builder: (BuildContext context, AsyncSnapshot<StockQuoteDetailModel> snapshot){
-                switch(snapshot.connectionState){
-                  case ConnectionState.none:
-                    return Text("ConnectionState.none");
-                  case ConnectionState.active:
-                    return Text("ConnectionState.active");
-                  case ConnectionState.waiting:
-                    return Text("ConnectionState.waiting");
-                  case ConnectionState.done:
-                    if(snapshot.hasError){
-                      return Text("ConnectionState.done with error ${snapshot.error.toString()}");
-                    }else{
-                      return Text("ConnectionState.done Result:${snapshot.data.symbol} ==> ${snapshot.data.companyName}");
-                    }
-                    return null;
-                }
-              },)
-            ,
+            TextField(
+              controller: textEditingController,
+            ),
+            RaisedButton(
+              onPressed: () {
+                setState(() {
+                  _requestStockQuoteDetail(textEditingController.text);
+                });
+              },
+              child: Text("Search"),
+            ),
+//            FutureBuilder<StockQuoteDetailModel>(
+//              future: DataRepository().getStockQuoteDetail(_symbol),
+//              builder: (BuildContext context,
+//                  AsyncSnapshot<StockQuoteDetailModel> snapshot) {
+//                switch (snapshot.connectionState) {
+//                  case ConnectionState.none:
+//                    return Text("ConnectionState.none");
+//                  case ConnectionState.active:
+//                    return Text("ConnectionState.active");
+//                  case ConnectionState.waiting:
+//                    return Text("ConnectionState.waiting");
+//                  case ConnectionState.done:
+//                    if (snapshot.hasError) {
+//                      return Text(
+//                          "ConnectionState.done with error ${snapshot.error.toString()}");
+//                    } else {
+//                      _updateStockQuoteDetailModel(snapshot.data);
+//
+//                      return Text(
+//                          "ConnectionState.done Result:${snapshot.data.symbol} ==> ${snapshot.data.companyName}");
+//                    }
+//                    return null;
+//                }
+//              },
+//            ),
             Padding(
               padding: EdgeInsets.only(top: 8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
-                  Text("GOOG"),
-                  Text("Alphabet, Incasdfdsfasdf"),
-                  Text("GOOG"),
-                  Text("Alphabet, Inc")
+                  Text(
+                      "Symbol: ${_stockQuoteDetailModel?.symbol?.toUpperCase()}"),
+                  Text("Company Name: ${_stockQuoteDetailModel?.companyName}"),
                 ],
               ),
             ),
-            _buildStockQuoteItem("Open: ", "245"),
-            _buildStockQuoteItem("Highest: ", "200"),
-            _buildStockQuoteItem("52week high: 100", "52week low: 43"),
-            _buildStockQuoteItem("Open: 298", "Close: 245"),
-            _buildStockQuoteItem("Highest: 300", "Lowest: 200"),
-            _buildStockQuoteItem("52week high: 100", "52week low: 43"),
+            _buildStockQuoteItem(
+                "Latest Price: ${_stockQuoteDetailModel?.latestPrice}", ""),
+            _buildStockQuoteItem("Highest: ${_stockQuoteDetailModel?.high}",
+                "Lowest: ${_stockQuoteDetailModel?.low}"),
+            _buildStockQuoteItem("Open: ${_stockQuoteDetailModel?.open}",
+                "Close: ${_stockQuoteDetailModel?.close}"),
           ],
         ),
       ),
