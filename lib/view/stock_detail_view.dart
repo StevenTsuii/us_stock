@@ -3,21 +3,25 @@ import 'package:us_stock/models/stock_quote_detail_model.dart';
 import 'package:us_stock/repository/data_repository.dart';
 
 class StockDetailView extends StatefulWidget {
+  final String query;
+
+  StockDetailView(this.query);
+
   @override
   State<StatefulWidget> createState() {
-    return _StockDetailViewState();
+    return _StockDetailViewState(query);
   }
 }
 
 class _StockDetailViewState extends State<StockDetailView> {
-  final textEditingController = TextEditingController();
-
   StockQuoteDetailModel _stockQuoteDetailModel;
 
+  _StockDetailViewState(String query);
 
   @override
   void initState() {
-    _requestStockQuoteDetail("aapl");
+    super.initState();
+    _requestStockQuoteDetail(widget.query);
   }
 
   _requestStockQuoteDetail(String symbol) {
@@ -35,64 +39,74 @@ class _StockDetailViewState extends State<StockDetailView> {
         Navigator.pop(context);
       },
       child: Container(
-        color: Colors.black54,
-        child: Column(
-          children: <Widget>[
-            TextField(
-              controller: textEditingController,
-            ),
-            RaisedButton(
-              onPressed: () {
-                setState(() {
-                  _requestStockQuoteDetail(textEditingController.text);
-                });
-              },
-              child: Text("Search"),
-            ),
-//            FutureBuilder<StockQuoteDetailModel>(
-//              future: DataRepository().getStockQuoteDetail(_symbol),
-//              builder: (BuildContext context,
-//                  AsyncSnapshot<StockQuoteDetailModel> snapshot) {
-//                switch (snapshot.connectionState) {
-//                  case ConnectionState.none:
-//                    return Text("ConnectionState.none");
-//                  case ConnectionState.active:
-//                    return Text("ConnectionState.active");
-//                  case ConnectionState.waiting:
-//                    return Text("ConnectionState.waiting");
-//                  case ConnectionState.done:
-//                    if (snapshot.hasError) {
-//                      return Text(
-//                          "ConnectionState.done with error ${snapshot.error.toString()}");
-//                    } else {
-//                      _updateStockQuoteDetailModel(snapshot.data);
-//
+        color: Colors.white,
+        child: Center(
+          child: FutureBuilder<StockQuoteDetailModel>(
+            future: DataRepository().getStockQuoteDetail(widget.query),
+            builder: (BuildContext context,
+                AsyncSnapshot<StockQuoteDetailModel> snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  return Text("ConnectionState.none");
+                case ConnectionState.active:
+                  return Text("ConnectionState.active");
+                case ConnectionState.waiting:
+                  return CircularProgressIndicator();
+                case ConnectionState.done:
+                  if (snapshot.hasError) {
+                    return Text("Cannot found this symbol '${widget.query}'");
+                  } else {
 //                      return Text(
 //                          "ConnectionState.done Result:${snapshot.data.symbol} ==> ${snapshot.data.companyName}");
-//                    }
-//                    return null;
-//                }
-//              },
-//            ),
-            Padding(
-              padding: EdgeInsets.only(top: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Text(
-                      "Symbol: ${_stockQuoteDetailModel?.symbol?.toUpperCase()}"),
-                  Text("Company Name: ${_stockQuoteDetailModel?.companyName}"),
-                ],
-              ),
-            ),
-            _buildStockQuoteItem(
-                "Latest Price: ${_stockQuoteDetailModel?.latestPrice}", ""),
-            _buildStockQuoteItem("Highest: ${_stockQuoteDetailModel?.high}",
-                "Lowest: ${_stockQuoteDetailModel?.low}"),
-            _buildStockQuoteItem("Open: ${_stockQuoteDetailModel?.open}",
-                "Close: ${_stockQuoteDetailModel?.close}"),
-          ],
+                    return Column(
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text("Text AAAAAAAAA"),
+                            Text("Text BBBBBBBB")
+                          ],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              Text(
+                                  "Symbol: ${_stockQuoteDetailModel?.symbol?.toUpperCase()}"),
+                              Text(
+                                  "Company Name: ${_stockQuoteDetailModel?.companyName}"),
+                            ],
+                          ),
+                        ),
+                        _buildStockQuoteItem(
+                            "Latest Price: ${_stockQuoteDetailModel?.latestPrice}",
+                            ""),
+                        _buildStockQuoteItem(
+                            "Highest: ${_stockQuoteDetailModel?.high}",
+                            "Lowest: ${_stockQuoteDetailModel?.low}"),
+                        _buildStockQuoteItem(
+                            "Open: ${_stockQuoteDetailModel?.open}",
+                            "Close: ${_stockQuoteDetailModel?.close}"),
+//                        ListView.builder(
+//                            itemCount: 10,
+//                            itemBuilder: (BuildContext context, int index) {
+//                              return Row(
+//                                mainAxisAlignment:
+//                                    MainAxisAlignment.spaceBetween,
+//                                children: <Widget>[
+//                                  Text("Text AAAAAAAAA"),
+//                                  Text("Text BBBBBBBB")
+//                                ],
+//                              );
+//                            }),
+                      ],
+                    );
+                  }
+              }
+            },
+          ),
         ),
       ),
     );

@@ -18,7 +18,7 @@ class _StockDetailPageState extends State<StockDetailPage> {
       body: Builder(
           builder: (context) => ListView.builder(
                 itemBuilder: (BuildContext context, int index) {
-                  return StockDetailView();
+                  return StockDetailView("goog");
                 },
                 itemCount: 1,
                 padding: EdgeInsets.all(8.0),

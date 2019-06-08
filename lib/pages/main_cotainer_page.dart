@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:us_stock/pages/first_page.dart';
+import 'package:us_stock/models/stock_quote_detail_model.dart';
 import 'package:us_stock/pages/second_page.dart';
 import 'package:us_stock/pages/stock_detail_page.dart';
 import 'package:us_stock/pages/test_page.dart';
+import 'package:us_stock/view/stock_detail_view.dart';
 
 class MainContainerPage extends StatefulWidget {
   @override
@@ -19,6 +20,13 @@ class MainContainerPageState extends State<MainContainerPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(appBarTitle),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+                showSearch(context: context, delegate: StockSearchDelegate());
+              })
+        ],
       ),
       body: Builder(builder: (context) => buildColumn(context)),
       drawer: buildDrawer(context),
@@ -28,7 +36,7 @@ class MainContainerPageState extends State<MainContainerPage> {
 
   Widget buildColumn(BuildContext context) {
     if (_selectedIndex == 0) {
-      return StockDetailPage();
+      return StockDetailView("goog");
     } else if (_selectedIndex == 1) {
       return SecondPage();
     } else {
@@ -100,5 +108,37 @@ class MainContainerPageState extends State<MainContainerPage> {
       _selectedIndex = index;
       appBarTitle = _bottomBarTitleList[index];
     });
+  }
+}
+
+class StockSearchDelegate extends SearchDelegate<StockQuoteDetailModel> {
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+          icon: Icon(Icons.clear),
+          onPressed: () {
+            query = "";
+          }),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+        icon: Icon(Icons.arrow_back),
+        onPressed: () {
+          close(context, null);
+        });
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return StockDetailView(query);
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return Text(query);
   }
 }
