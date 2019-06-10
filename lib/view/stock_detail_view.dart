@@ -59,14 +59,88 @@ class _StockDetailViewState extends State<StockDetailView> {
 //                      return Text(
 //                          "ConnectionState.done Result:${snapshot.data.symbol} ==> ${snapshot.data.companyName}");
                     return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                "Symbol",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 20),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                "Company Name",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 18),
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          "Last update time: 9 Jun 2019",
+                          style: TextStyle(color: Colors.black, fontSize: 10),
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              "1066.41",
+                              style:
+                                  TextStyle(color: Colors.green, fontSize: 24),
+                            ),
+                            Text(
+                              "(+15.21%)",
+                              style:
+                                  TextStyle(color: Colors.green, fontSize: 18),
+                            ),
+                          ],
+                        ),
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text("Text AAAAAAAAA"),
-                            Text("Text BBBBBBBB")
+                            Text(
+                              "Highest: ",
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 16),
+                            ),
+                            Text(
+                              "1080.99",
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 16),
+                            ),
+                            Spacer(
+                              flex: 1,
+                            ),
+                            Text(
+                              "Lowest: ",
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 16),
+                            ),
+                            Text(
+                              "1000.99",
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 16),
+                            ),
                           ],
                         ),
+                        Text(
+                          "Open: 1011.22",
+                          style: TextStyle(color: Colors.black, fontSize: 16),
+                        ),
+
+                        Text(
+                          "Close: 1080.23",
+                          style: TextStyle(color: Colors.black, fontSize: 16),
+                        ),
+
                         Padding(
                           padding: EdgeInsets.only(top: 8.0),
                           child: Row(
