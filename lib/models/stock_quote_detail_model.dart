@@ -18,6 +18,12 @@ class StockQuoteDetailModel {
   String latestSource;
   String latestTime;
   double latestUpdate;
+  double change;
+  double changePercent;
+  double week52High;
+  double week52Low;
+  double latestVolume;
+  double previousClose;
 
   StockQuoteDetailModel();
 

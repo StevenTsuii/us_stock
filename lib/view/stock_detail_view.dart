@@ -58,111 +58,142 @@ class _StockDetailViewState extends State<StockDetailView> {
                   } else {
 //                      return Text(
 //                          "ConnectionState.done Result:${snapshot.data.symbol} ==> ${snapshot.data.companyName}");
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                "Symbol",
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 20),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                "Company Name",
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 18),
-                              ),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          "Last update time: 9 Jun 2019",
-                          style: TextStyle(color: Colors.black, fontSize: 10),
-                        ),
-                        Row(
-                          children: <Widget>[
-                            Text(
-                              "1066.41",
-                              style:
-                                  TextStyle(color: Colors.green, fontSize: 24),
-                            ),
-                            Text(
-                              "(+15.21%)",
-                              style:
-                                  TextStyle(color: Colors.green, fontSize: 18),
-                            ),
-                          ],
-                        ),
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              "Highest: ",
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 16),
-                            ),
-                            Text(
-                              "1080.99",
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 16),
-                            ),
-                            Spacer(
-                              flex: 1,
-                            ),
-                            Text(
-                              "Lowest: ",
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 16),
-                            ),
-                            Text(
-                              "1000.99",
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 16),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          "Open: 1011.22",
-                          style: TextStyle(color: Colors.black, fontSize: 16),
-                        ),
-
-                        Text(
-                          "Close: 1080.23",
-                          style: TextStyle(color: Colors.black, fontSize: 16),
-                        ),
-
-                        Padding(
-                          padding: EdgeInsets.only(top: 8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            mainAxisSize: MainAxisSize.max,
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
                             children: <Widget>[
-                              Text(
-                                  "Symbol: ${_stockQuoteDetailModel?.symbol?.toUpperCase()}"),
-                              Text(
-                                  "Company Name: ${_stockQuoteDetailModel?.companyName}"),
+                              Expanded(
+                                flex: 1,
+                                child: Text(
+                                  snapshot.data.symbol,
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 20),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  snapshot.data.companyName,
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 18),
+                                ),
+                              )
                             ],
                           ),
-                        ),
-                        _buildStockQuoteItem(
-                            "Latest Price: ${_stockQuoteDetailModel?.latestPrice}",
-                            ""),
-                        _buildStockQuoteItem(
-                            "Highest: ${_stockQuoteDetailModel?.high}",
-                            "Lowest: ${_stockQuoteDetailModel?.low}"),
-                        _buildStockQuoteItem(
-                            "Open: ${_stockQuoteDetailModel?.open}",
-                            "Close: ${_stockQuoteDetailModel?.close}"),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            "Last update time: ${snapshot.data.latestTime}",
+                            style: TextStyle(color: Colors.black, fontSize: 10),
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                "${snapshot.data.latestPrice}",
+                                style: TextStyle(
+                                    color: snapshot.data.latestPrice >
+                                            snapshot.data.previousClose
+                                        ? Colors.green
+                                        : Colors.red,
+                                    fontSize: 24),
+                              ),
+                              Text(
+                                "(${snapshot.data.change}%)",
+                                style: TextStyle(
+                                    color: snapshot.data.change > 0
+                                        ? Colors.green
+                                        : Colors.red,
+                                    fontSize: 18),
+                              ),
+                            ],
+                          ),
+
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                flex: 1,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      "Highest: ${snapshot.data.high}",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Lowest: ${snapshot.data.low}",
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 16),
+                                    ),
+                                    Text(
+                                      "52 week high: ${snapshot.data.week52High}",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Text(
+                                      "52 week low: ${snapshot.data.week52Low}",
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 16),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      "Today Open: ${snapshot.data.open}",
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 16),
+                                    ),
+                                    Text(
+                                      "Previous Close: ${snapshot.data.previousClose}",
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 16),
+                                    ),
+                                    Text(
+                                      "Volume: ${snapshot.data.latestVolume}",
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 16),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          Padding(
+                            padding: EdgeInsets.only(top: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                Text(
+                                    "Symbol: ${_stockQuoteDetailModel?.symbol?.toUpperCase()}"),
+                                Text(
+                                    "Company Name: ${_stockQuoteDetailModel?.companyName}"),
+                              ],
+                            ),
+                          ),
+                          _buildStockQuoteItem(
+                              "Latest Price: ${_stockQuoteDetailModel?.latestPrice}",
+                              ""),
+                          _buildStockQuoteItem(
+                              "Highest: ${_stockQuoteDetailModel?.high}",
+                              "Lowest: ${_stockQuoteDetailModel?.low}"),
+                          _buildStockQuoteItem(
+                              "Open: ${_stockQuoteDetailModel?.open}",
+                              "Close: ${_stockQuoteDetailModel?.close}"),
 //                        ListView.builder(
 //                            itemCount: 10,
 //                            itemBuilder: (BuildContext context, int index) {
@@ -175,7 +206,8 @@ class _StockDetailViewState extends State<StockDetailView> {
 //                                ],
 //                              );
 //                            }),
-                      ],
+                        ],
+                      ),
                     );
                   }
               }
@@ -186,6 +218,7 @@ class _StockDetailViewState extends State<StockDetailView> {
     );
   }
 
+  
   Widget _addPadding(Widget widget) {
     return Container(
       child: Padding(
