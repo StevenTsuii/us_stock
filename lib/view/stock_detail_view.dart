@@ -1,6 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_money_formatter/flutter_money_formatter.dart';
+import 'package:us_stock/models/news_model.dart';
 import 'package:us_stock/models/stock_quote_detail_model.dart';
 import 'package:us_stock/repository/data_repository.dart';
+
+import '../constants.dart';
 
 class StockDetailView extends StatefulWidget {
   final String query;
@@ -63,25 +68,16 @@ class _StockDetailViewState extends State<StockDetailView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  snapshot.data.symbol,
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 20),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  snapshot.data.companyName,
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 18),
-                                ),
-                              )
-                            ],
+                          Text(
+                            snapshot.data.symbol,
+                            style: TextStyle(color: Colors.black, fontSize: 20),
+                          ),
+                          SizedBox(
+                            height: 4,
+                          ),
+                          Text(
+                            snapshot.data.companyName,
+                            style: TextStyle(color: Colors.black, fontSize: 20),
                           ),
                           SizedBox(
                             height: 10,
@@ -102,7 +98,7 @@ class _StockDetailViewState extends State<StockDetailView> {
                           Row(
                             children: <Widget>[
                               Text(
-                                "${snapshot.data.change >= 0 ? "+" : "-"}${snapshot.data.change.toStringAsFixed(3)}",
+                                "${snapshot.data.change >= 0 ? "+" : ""}${snapshot.data.change.toStringAsFixed(3)}",
                                 style: TextStyle(
                                     color: snapshot.data.change > 0
                                         ? Colors.green
@@ -113,7 +109,7 @@ class _StockDetailViewState extends State<StockDetailView> {
                                 width: 8,
                               ),
                               Text(
-                                "(${snapshot.data.changePercent >= 0 ? "+" : "-"}${snapshot.data.changePercent.toStringAsFixed(2)}%)",
+                                "(${snapshot.data.changePercent.toStringAsFixed(2)}%)",
                                 style: TextStyle(
                                     color: snapshot.data.changePercent > 0
                                         ? Colors.green
@@ -128,29 +124,48 @@ class _StockDetailViewState extends State<StockDetailView> {
                             children: <Widget>[
                               Expanded(
                                 flex: 1,
-                                child: Text(
-                                  "Highest: ",
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 16),
-                                ),
+                                child: _getKeyText("High"),
                               ),
                               Expanded(
                                 flex: 1,
-                                child: Text(
-                                  "${snapshot.data.high != null ? snapshot.data.high.toStringAsFixed(3) : "---"}",
-                                  style: _getPriceTextStyle(snapshot.data.high,
-                                      snapshot.data.previousClose),
-                                ),
+                                child: _getValueColoredText(
+                                    snapshot.data, snapshot.data.high),
                               ),
+                              Expanded(flex: 1, child: _getKeyText("Open")),
                               Expanded(
                                 flex: 1,
-                                child: Text(
-                                  "52wk high: ",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                  ),
-                                ),
+                                child: _getValueColoredText(
+                                    snapshot.data, snapshot.data.open),
+                              ),
+                            ],
+                          ),
+
+                          // ****** Second Row ******
+                          Row(
+                            children: <Widget>[
+                              Expanded(flex: 1, child: _getKeyText("Low")),
+                              Expanded(
+                                  flex: 1,
+                                  child: _getValueColoredText(
+                                      snapshot.data, snapshot.data.low)),
+                              Expanded(
+                                  flex: 1, child: _getKeyText("Prev. close")),
+                              Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    "${snapshot.data.previousClose.toStringAsFixed(3)}",
+                                    style: TextStyle(
+                                        color: Colors.black, fontSize: 16),
+                                  )),
+                            ],
+                          ),
+
+                          // ****** Third Row ******
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                flex: 1,
+                                child: _getKeyText("52WK High"),
                               ),
                               Expanded(
                                 flex: 1,
@@ -162,130 +177,102 @@ class _StockDetailViewState extends State<StockDetailView> {
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-
-                          // ****** Second Row ******
-                          Row(
-                            children: <Widget>[
                               Expanded(
                                 flex: 1,
-                                child: Text(
-                                  "Lowest: ",
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 16),
-                                ),
+                                child: _getKeyText("Volume"),
                               ),
                               Expanded(
                                 flex: 1,
                                 child: Text(
-                                  "${snapshot.data.low != null ? snapshot.data.low.toStringAsFixed(3) : "---"}",
-                                  style: _getPriceTextStyle(snapshot.data.low,
-                                      snapshot.data.previousClose),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  "52wk low: ",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  "${snapshot.data.week52Low.toStringAsFixed(3)}",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-
-                          // ****** Third Row ******
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  "Open: ",
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 16),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child:  Text(
-                                  "${snapshot.data.open.toStringAsFixed(3)}",
-                                  style: TextStyle(
-                                      color: snapshot.data.open <
-                                          snapshot.data.previousClose
-                                          ? Colors.red
-                                          : Colors.green,
-                                      fontSize: 16),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  "Volume: ",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  "${snapshot.data.latestVolume}",
+                                  "${snapshot.data.latestVolume != null ? "${FlutterMoneyFormatter(amount: snapshot.data.latestVolume).output.compactNonSymbol}" : "---"}",
                                   style: TextStyle(
                                       color: Colors.black, fontSize: 16),
                                 ),
                               ),
                             ],
                           ),
-
 
                           // ****** Forth Row ******
                           Row(
                             children: <Widget>[
+                              Expanded(flex: 1, child: _getKeyText("52WK Low")),
                               Expanded(
                                 flex: 1,
                                 child: Text(
-                                  "Prev. close: ",
+                                  "${snapshot.data.week52Low != null ? snapshot.data.week52Low.toStringAsFixed(3) : "---"}",
                                   style: TextStyle(
-                                      color: Colors.black, fontSize: 16),
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                  ),
                                 ),
                               ),
                               Expanded(
                                 flex: 1,
-                                child:    Text(
-                                  "${snapshot.data.previousClose.toStringAsFixed(3)}",
+                                child: _getKeyText("Market Cap"),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Text(
+                                  "${snapshot.data.marketCap != null ? "${FlutterMoneyFormatter(amount: snapshot.data.marketCap).output.compactNonSymbol}" : "---"}",
                                   style: TextStyle(
                                       color: Colors.black, fontSize: 16),
-                                )
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(""),
-
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(""),
-                               
+                                ),
                               ),
                             ],
                           ),
-
-
-                          
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Expanded(
+                            child: FutureBuilder<List<NewsModel>>(
+                                future:
+                                    DataRepository().getNewsList(widget.query),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<List<NewsModel>> snapshot) {
+                                  switch (snapshot.connectionState) {
+                                    case ConnectionState.none:
+                                      return Text("ConnectionState.none");
+                                    case ConnectionState.active:
+                                      return Text("ConnectionState.active");
+                                    case ConnectionState.waiting:
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    case ConnectionState.done:
+                                      if (snapshot.hasError) {
+                                        return Text(
+                                            "Cannot found this symbol '${widget.query}");
+                                      } else {
+                                        return ListView.separated(
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            return ListTile(
+                                              title: Text(
+                                                "${snapshot.data[index].headline}",
+                                                maxLines: 2,
+                                              ),
+                                              subtitle: Text(
+                                                "${snapshot.data[index].summary}",
+                                                maxLines: 4,
+                                              ),
+                                              leading: CachedNetworkImage(
+                                                imageUrl:
+                                                    "${snapshot.data[index].url}?token=${Constants.token}",
+                                                placeholder:
+                                                    new CircularProgressIndicator(),
+                                                errorWidget: Icon(Icons.error),
+                                              ),
+                                            );
+                                          },
+                                          separatorBuilder: (context, index) =>
+                                              Divider(
+                                                color: Colors.black,
+                                              ),
+                                          itemCount: snapshot.data.length,
+                                        );
+                                      }
+                                  }
+                                }),
+                          )
                         ],
                       ),
                     );
@@ -298,7 +285,28 @@ class _StockDetailViewState extends State<StockDetailView> {
     );
   }
 
-  TextStyle _getPriceTextStyle(double value, double previousClose) {
+  Text _getValueColoredText(StockQuoteDetailModel model, double value) {
+    return Text(
+      "${value != null ? value.toStringAsFixed(3) : "---"}",
+      style: _getValueTextStyle(value, model.previousClose),
+    );
+  }
+
+  Text _getValueText(double value) {
+    return Text(
+      "${value != null ? value.toStringAsFixed(3) : "---"}",
+      style: TextStyle(color: Colors.black, fontSize: 16),
+    );
+  }
+
+  Text _getKeyText(String keyName) {
+    return Text(
+      "$keyName: ",
+      style: TextStyle(color: Colors.black, fontSize: 16),
+    );
+  }
+
+  TextStyle _getValueTextStyle(double value, double previousClose) {
     return TextStyle(
       color: value == null || value == previousClose
           ? Colors.grey

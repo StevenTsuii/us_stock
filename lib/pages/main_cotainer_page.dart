@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:us_stock/models/news_model.dart';
 import 'package:us_stock/models/stock_quote_detail_model.dart';
 import 'package:us_stock/pages/second_page.dart';
-import 'package:us_stock/pages/stock_detail_page.dart';
 import 'package:us_stock/pages/test_page.dart';
+import 'package:us_stock/repository/data_repository.dart';
 import 'package:us_stock/view/stock_detail_view.dart';
 
 class MainContainerPage extends StatefulWidget {
@@ -134,7 +135,9 @@ class StockSearchDelegate extends SearchDelegate<StockQuoteDetailModel> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return StockDetailView(query);
+    return Column(children: <Widget>[
+      StockDetailView(query),
+    ]);
   }
 
   @override

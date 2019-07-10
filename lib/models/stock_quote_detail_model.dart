@@ -24,6 +24,7 @@ class StockQuoteDetailModel {
   double week52Low;
   double latestVolume;
   double previousClose;
+  double marketCap;
 
   StockQuoteDetailModel();
 
