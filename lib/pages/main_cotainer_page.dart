@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:us_stock/models/news_model.dart';
 import 'package:us_stock/models/stock_quote_detail_model.dart';
 import 'package:us_stock/pages/second_page.dart';
+import 'package:us_stock/pages/stock_detail_page.dart';
 import 'package:us_stock/pages/test_page.dart';
-import 'package:us_stock/repository/data_repository.dart';
 import 'package:us_stock/view/stock_detail_view.dart';
+
+import 'first_page.dart';
 
 class MainContainerPage extends StatefulWidget {
   @override
@@ -37,7 +38,8 @@ class MainContainerPageState extends State<MainContainerPage> {
 
   Widget buildColumn(BuildContext context) {
     if (_selectedIndex == 0) {
-      return StockDetailView("goog");
+//      return StockDetailView(query: "goog",);
+    return FirstPage();
     } else if (_selectedIndex == 1) {
       return SecondPage();
     } else {
@@ -135,13 +137,24 @@ class StockSearchDelegate extends SearchDelegate<StockQuoteDetailModel> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return Column(children: <Widget>[
-      StockDetailView(query),
-    ]);
+
+    return StockDetailView(query: query);
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return Text(query);
+    return GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => StockDetailPage(query: query,)),
+          );
+        },
+        child: ListTile(
+          title: Text(
+            query,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ));
   }
 }
